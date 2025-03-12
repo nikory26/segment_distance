@@ -10,31 +10,48 @@
 const int SpaceDim = 3;
 using real = double;
 
+
+//! Clacc Point 3D represents the point in 3D space
 class Point3D
 {
 protected:
-    real X[SpaceDim];
+    real X[SpaceDim]; /// The array with coordinates (x,y,z)
 public:
+    /// @brief Constructs the Point3D object by given coordinates
+    /// @param x X coordinate
+    /// @param y Y coordinate
+    /// @param z Z coordinate
     Point3D(real x, real y, real z)
     {
         X[0] = x; X[1] = y; X[2] = z;
     }
+    /// @brief Default constructor constructs the null point
     Point3D(){memset(X,0,sizeof(X));}
+    /// @brief Constructs the Point3D object by coordinates given in initializer list
+    /// @param a Initializer list of size = 3 containing te coordinates.
     Point3D(std::initializer_list<real> a)
     {
         assert(a.size() == SpaceDim && "Point3D can be constructed only from 3 coordinates");
         auto _a = std::data(a);
         X[0] = _a[0]; X[1] = _a[1]; X[2] = _a[2];
     }
+    /// @brief Constructs the Point3D object by coordinates given in data array pointed with d
+    /// @param d Pointer at data array containing point coordinates
     Point3D(const real *d)
     {
         memcpy(X,d,sizeof(X));
     }
+    /// @brief Extracts the i-th coordinate value
+    /// @param i The number of the coordinate axis (0 is x, 1 is y, 2 is z)
+    /// @return The desired coordinate value
     real operator[](int i) const
     {
         assert(i >=0 && i < SpaceDim && "Index out of bounds");
         return X[i];
     }
+    /// @brief Extracts the i-th coordinate value to be modified
+    /// @param i The number of the coordinate axis (0 is x, 1 is y, 2 is z)
+    /// @return The reference to desired coordinate value
     real& operator[](int i)
     {
         assert(i >=0 && i < SpaceDim && "Index out of bounds");
@@ -42,6 +59,10 @@ public:
     }
 };
 
+/// @brief Calculates the squared euclidian distance between two given points
+/// @param a The first point
+/// @param b The second point
+/// @return The squared euclidian distance between two given points value
 real distance2(const Point3D& a, const Point3D& b)
 {
     real r = 0;
@@ -54,18 +75,32 @@ real distance2(const Point3D& a, const Point3D& b)
     return r;
 }
 
+/// @brief Calculates the euclidian distance between two given points
+/// @param a The first point
+/// @param b The second point
+/// @return The euclidian distance between two given points value
 real distance(const Point3D& a, const Point3D& b)
 {
     return std::sqrt(distance2(a,b));
 }
 
+/// @brief Vector3D class represents the radius-vector of a point
 class Vector3D: public Point3D
 {
 public:
+    /// @brief Constructs the radius-vector of a given point
+    /// @param x The point that the vector represents
     Vector3D(const Point3D& x): Point3D(x) {}
+    /// @brief Constructs the Vector3D object with the given coordinates
+    /// @param x X coordinate
+    /// @param y Y coordinate
+    /// @param z Z coordinate
     Vector3D(real x, real y, real z): Point3D(x,y,z) {}
+    /// @brief Default constructor constructs the null vector
     Vector3D(): Point3D() {}
-    Vector3D(const real *d): Point3D(d) {}
+    /// @brief Calculates the inner product of this vector and the given one
+    /// @param v The vector to calculate the inner product with
+    /// @return The value of the inner product
     real dot(const Vector3D& v) const
     {
         const Vector3D &x(*this);
@@ -76,21 +111,31 @@ public:
         }
         return r;
     }
+    /// @brief Calculates the vector product of this vector and the given one
+    /// @param v The vector to calculate the vector product with
+    /// @return The vector representing the vector product
     Vector3D vector_product(const Vector3D& u) const
     {
-        auto& v(*this);
+        const Vector3D& v(*this);
         return Vector3D(v[1] * u[2] - v[2] * u[1], 
                       -(v[0] * u[2] - v[2] * u[0]), 
                         v[0] * u[1] - v[1] * u[0]);
     }
+    /// @brief Calculates the dot of this with itself
+    /// @return The squared norm of this vector
     real norm2() const
     {
         return dot(*this);
     }
+    /// @brief Calculates the norm of this vector
+    /// @return The norm of this vector
     real norm() const
     {
         return std::sqrt(norm2());
     }
+    /// @brief Modifies this vector by multiplying each coordinate on the given number
+    /// @param a The given number
+    /// @return This vector modified by multiplication on the given number
     Vector3D& operator *= (real a)
     {
         for(int i = 0; i < SpaceDim; ++i)
@@ -99,11 +144,17 @@ public:
         }
         return *this;
     }
+    /// @brief Modifies this vector by dividing each coordinate on the given number
+    /// @param a The given number
+    /// @return This vector modified by division on the given number
     Vector3D& operator /= (real a)
     {
         assert(a != 0 && "Trying to divide by zero!");
         return (*this) *= 1.0 / a;
     }
+    /// @brief Modifies this vector by adding another vector
+    /// @param a Added vector
+    /// @return Modified vector
     Vector3D& operator += (const Vector3D& a)
     {
         for(int i = 0; i < SpaceDim; ++i)
@@ -112,6 +163,9 @@ public:
         }
         return *this;
     }
+    /// @brief Modifies this vector by substraction another vector
+    /// @param a Vector to be substracted
+    /// @return Modified vector
     Vector3D& operator -= (const Vector3D& a)
     {
         for(int i = 0; i < SpaceDim; ++i)
@@ -120,6 +174,8 @@ public:
         }
         return *this;
     }
+    /// @brief Modifies this vector by reversing
+    /// @return Modified vector
     Vector3D operator - ()
     {
         Vector3D r(*this);
@@ -128,13 +184,20 @@ public:
     }
 };
 
+/// @brief Class segment represents the line segment between the given points
 class Segment3D
 {
 protected:
+    /// @brief A storage of pair of points
     Vector3D X[2];
+    /// @brief Vector representing the direction of the line
     Vector3D l;
+    /// @brief The segment lenght value
     real S;
 public:
+    /// @brief Constructs the segment by a pair of given points
+    /// @param x0 The begin point
+    /// @param x1 The end point
     Segment3D(const Point3D& x0, const Point3D& x1)
     {
         X[0] = x0;
@@ -150,26 +213,40 @@ public:
             l /= S;
         }
     }
+    /// @brief Gets the point at segment begin
+    /// @return Constant referens of the point
     const Vector3D& begin()const{return X[0];}
+    /// @brief Gets the point at segment end
+    /// @return Constant referens of the point
     const Vector3D& end()const{return X[1];}
+    /// @brief Gets the direction vector const reference
+    /// @return Constant referens of the point
     const Vector3D& ort()const{return l;}
+    /// @brief Returns the segment lenght value
+    /// @return Segment lenght value
     real lenght() const {return S;}
+    /// @brief Calculates the projection of the given point onto cegment line
+    /// @param x The point that projection to be calculated
+    /// @return The distance from the begin point to the projection along the segment line direction
     real projection(const Point3D& x)const
     {
         return (Vector3D(x)-=begin()).dot(ort());
     }
+    /// @brief Check if the projection given by the distance from the segment beginning poing lies inside or outside the segment
+    /// @param p The Given distance from the segment beginning pointing the point on the segment line
+    /// @return -1 if p < 0; 0 if p is owned by segment; 1 if point lies to the right of the segment ending point
     int is_projection_out(real p)const
     {
         if(p < 0) return -1;
         else if(p < lenght()) return 0;
         else return 1;
     }
-    bool parallel(const Segment3D& s, real eps = std::numeric_limits<real>::epsilon())const
-    {
-        real l1l2 = s.ort().dot(ort());
-    }
 };
 
+/// @brief Calculates the squared distance from the given point to the given line
+/// @param x The given point
+/// @param l The segment representinting the line
+/// @return The squared distance value
 real distance2_to_line(const Point3D& x, const Segment3D& l)
 {
     Vector3D c = x; c -= l.begin();
@@ -177,14 +254,25 @@ real distance2_to_line(const Point3D& x, const Segment3D& l)
     return c.norm2() - b * b;
 }
 
+/// @brief Calculates the distance from the given point to the given line
+/// @param x The given point
+/// @param l The segment representinting the line
+/// @return The distance value
 real distance_to_line(const Point3D& x, const Segment3D& l)
 {
     return sqrt(distance2_to_line(x, l));
 }
 
+/// @brief Calculates the points on the two lines with a minimal distance from each other
+/// @param x10 The point on the first line beginning
+/// @param l1 The Direction vector of the first line
+/// @param x20 The point on the second line beginning
+/// @param l2 The Direction vector of the second line
+/// @param eps The tolerance for comparing the floating numbers
+/// @return The Pair. The ferst member is a pair of the desired points coordinates in lical line coordinate system. The second member is the sign if the given lines are skew
 std::pair<std::pair<real,real>, bool> crest(
-    const Vector3D x10, const Vector3D& l1, 
-    const Vector3D x20, const Vector3D& l2, 
+    const Vector3D& x10, const Vector3D& l1, 
+    const Vector3D& x20, const Vector3D& l2, 
     real eps = 10 * std::numeric_limits<real>::epsilon())
 {
     std::pair<std::pair<real,real>, bool> result;
@@ -206,6 +294,10 @@ std::pair<std::pair<real,real>, bool> crest(
     return result;
 }
 
+/// @brief Calculates the distance between the two given 3D segmrnts
+/// @param S1 The first segment
+/// @param S2 The second segment
+/// @return The distance value
 inline real segments_distance(const Segment3D& S1, const Segment3D& S2)
 {
     auto cr = crest(S1.begin(),S1.ort(),S2.begin(),S2.ort());

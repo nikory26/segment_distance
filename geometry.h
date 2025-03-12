@@ -298,6 +298,22 @@ std::pair<std::pair<real,real>, bool> crest(
 /// @param S1 The first segment
 /// @param S2 The second segment
 /// @return The distance value
+/** 
+ Algorithm description:
+ The parametric equation of a line is expressed as
+ p = p0 + t*l
+ where p0 is a given point, l is a line direction, and t is a coordinate of the point p along the line
+ For the line from point p0 to p1 it can be expressed as
+ p = p0 + t * (p1 - p0) / |p1 - p0|
+ So the segment of the line between p0 and p1 could be defined via t limiting from 0 to |p1 - p0|.
+ Minimizing the distance between the two points owned by the two non-intersecting 3D lines p and q yields the solution 
+ for the coordinates of the closest points:
+         tp_m =  ((lp,q0-p0) - (lp,lq) * (lq,q0-p0)) / d
+         tq_m = (-(lq,q0-p0) + (lp,lq) * (lp,q0-p0)) / d
+         d = 1 - (lp,lq)^2
+ So the pair of (tp_m, tq_m) may be located in several positions relative to the rectangle on the parametric plane that could be defined for the segments' points coordinates on the lines.
+ The distance between segments is calculated from that location as it is implemented in the source code.
+ */
 inline real segments_distance(const Segment3D& S1, const Segment3D& S2)
 {
     auto cr = crest(S1.begin(),S1.ort(),S2.begin(),S2.ort());

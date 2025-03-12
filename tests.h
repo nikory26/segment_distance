@@ -1,5 +1,7 @@
 #pragma once
 
+#include "geometry.h"
+
 int test1();
 int test2();
 int test3();

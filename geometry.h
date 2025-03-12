@@ -62,7 +62,7 @@ public:
 /// @param a The first point
 /// @param b The second point
 /// @return The squared euclidian distance between two given points value
-real distance2(const Point3D& a, const Point3D& b)
+inline real distance2(const Point3D& a, const Point3D& b)
 {
     real r = 0;
     real d_i = 0;
@@ -78,7 +78,7 @@ real distance2(const Point3D& a, const Point3D& b)
 /// @param a The first point
 /// @param b The second point
 /// @return The euclidian distance between two given points value
-real distance(const Point3D& a, const Point3D& b)
+inline real distance(const Point3D& a, const Point3D& b)
 {
     return std::sqrt(distance2(a,b));
 }
@@ -246,7 +246,7 @@ public:
 /// @param x The given point
 /// @param l The segment representinting the line
 /// @return The squared distance value
-real distance2_to_line(const Point3D& x, const Segment3D& l)
+inline real distance2_to_line(const Point3D& x, const Segment3D& l)
 {
     Vector3D c = x; c -= l.begin();
     real b = c.dot(l.ort());
@@ -257,7 +257,7 @@ real distance2_to_line(const Point3D& x, const Segment3D& l)
 /// @param x The given point
 /// @param l The segment representinting the line
 /// @return The distance value
-real distance_to_line(const Point3D& x, const Segment3D& l)
+inline real distance_to_line(const Point3D& x, const Segment3D& l)
 {
     return sqrt(distance2_to_line(x, l));
 }
@@ -269,7 +269,7 @@ real distance_to_line(const Point3D& x, const Segment3D& l)
 /// @param l2 The Direction vector of the second line
 /// @param eps The tolerance for comparing the floating numbers
 /// @return The Pair. The ferst member is a pair of the desired points coordinates in lical line coordinate system. The second member is the sign if the given lines are skew
-std::pair<std::pair<real,real>, bool> crest(
+inline std::pair<std::pair<real,real>, bool> crest(
     const Vector3D& x10, const Vector3D& l1, 
     const Vector3D& x20, const Vector3D& l2, 
     real eps = 10 * std::numeric_limits<real>::epsilon())
@@ -399,13 +399,13 @@ inline real segments_distance(const Segment3D& S1, const Segment3D& S2)
     }
 }
 
-std::ostream& operator << (std::ostream& s, const Point3D& x)
+inline std::ostream& operator << (std::ostream& s, const Point3D& x)
 {
     s << "(" << x[0] << ", " << x[1] << ", " << x[2] << ")";
     return s;
 }
 
-std::ostream& operator << (std::ostream& s, const Segment3D& x)
+inline std::ostream& operator << (std::ostream& s, const Segment3D& x)
 {
     s << "{" << x.begin() << " -- " << x.end() << "}";
     return s;

@@ -1,3 +1,4 @@
+#include "geometry.h"
 #include "tests.h"
 
 int test1()

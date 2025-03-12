@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <limits>
 #include <initializer_list>
+#include <iostream>
 
 const int SpaceDim = 3;
 using real = double;
@@ -311,7 +312,8 @@ std::pair<std::pair<real,real>, bool> crest(
          tp_m =  ((lp,q0-p0) - (lp,lq) * (lq,q0-p0)) / d
          tq_m = (-(lq,q0-p0) + (lp,lq) * (lp,q0-p0)) / d
          d = 1 - (lp,lq)^2
- So the pair of (tp_m, tq_m) may be located in several positions relative to the rectangle on the parametric plane that could be defined for the segments' points coordinates on the lines.
+ So the pair of (tp_m, tq_m) may be located in several positions relative to the rectangle 
+ on the parametric plane which could be defined for the segments' points coordinates on the lines.
  The distance between segments is calculated from that location as it is implemented in the source code.
  */
 inline real segments_distance(const Segment3D& S1, const Segment3D& S2)

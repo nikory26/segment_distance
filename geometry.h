@@ -47,7 +47,6 @@ public:
     /// @return The desired coordinate value
     real operator[](int i) const
     {
-        assert(i >=0 && i < SpaceDim && "Index out of bounds");
         return X[i];
     }
     /// @brief Extracts the i-th coordinate value to be modified
@@ -55,7 +54,6 @@ public:
     /// @return The reference to desired coordinate value
     real& operator[](int i)
     {
-        assert(i >=0 && i < SpaceDim && "Index out of bounds");
         return X[i];
     }
 };
